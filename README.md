@@ -86,9 +86,7 @@ dokku domains:set n8n n8n.example.com
 Map the internal port `5678` to the external port `80`:
 
 ```bash
-# dokku ports:set n8n http:80:5678
-#  !     `ports:set n8n http:80:5678` is not a dokku command.
-#  !     See `dokku help` for a list of available commands.
+# dokku proxy:ports-set n8n http:80:5678
 
 ```
 
@@ -138,7 +136,7 @@ Secure your app with an SSL certificate from Let's Encrypt:
 1. Add the HTTPS port:
 
     ```bash
-    dokku ports:add n8n https:443:5678
+    dokku proxy:ports:add n8n https:443:5678
     ```
 
 2. Install the Let's Encrypt plugin:
@@ -156,7 +154,7 @@ Secure your app with an SSL certificate from Let's Encrypt:
 4. Enable Let's Encrypt for the app:
 
     ```bash
-    dokku letsencrypt:enable n8n
+    dokku letsencrypt n8n
     ```
 
 ## Wrapping Up
