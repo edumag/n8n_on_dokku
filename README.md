@@ -62,7 +62,7 @@ dokku config:set n8n N8N_ENCRYPTION_KEY=$(echo `openssl rand -base64 45` | tr -d
 Set the webhook URL for your n8n instance:
 
 ```bash
-dokku config:set n8n WEBHOOK_URL=http://n8n.example.com
+dokku config:set n8n WEBHOOK_URL=https://n8n.example.com
 ```
 
 ### 3. Configure Persistent Storage
@@ -71,7 +71,7 @@ To persist data between restarts (like community nodes, logs, etc...), create a 
 
 ```bash
 dokku storage:ensure-directory n8n --chown false
-chown 1000:1000 /var/lib/dokku/data/storage/n8n
+# chown 1000:1000 /var/lib/dokku/data/storage/n8n
 dokku storage:mount n8n /var/lib/dokku/data/storage/n8n:/home/node/.n8n
 ```
 
@@ -86,7 +86,10 @@ dokku domains:set n8n n8n.example.com
 Map the internal port `5678` to the external port `80`:
 
 ```bash
-dokku ports:set n8n http:80:5678
+# dokku ports:set n8n http:80:5678
+#  !     `ports:set n8n http:80:5678` is not a dokku command.
+#  !     See `dokku help` for a list of available commands.
+
 ```
 
 ### 5. Deploy the App
