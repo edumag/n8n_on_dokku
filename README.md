@@ -1,73 +1,71 @@
-![](.github/images/repo_header.png)
+# Instalar n8n en Dokku
 
-[![n8n](https://img.shields.io/badge/n8n-1.122.4-blue.svg)](https://github.com/n8n-io/n8n/releases/tag/n8n%401.122.4)
-[![Dokku](https://img.shields.io/badge/Dokku-Repo-blue.svg)](https://github.com/dokku/dokku)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/d1ceward-on-dokku/minio_on_dokku/graphs/commit-activity)
-# Run n8n on Dokku
+![n8n](./img/n8n_dokku.png)
 
-## Overview
+Esta guía explica cómo implementar [n8n](https://n8n.io/), una herramienta de
+automatización de flujo de trabajo extensible, en un host
+[Dokku](http://dokku.viewdocs.io/dokku/). Dokku es una PaaS liviana que
+simplifica la implementación y administración de aplicaciones mediante Docker.
 
-This guide explains how to deploy [n8n](https://n8n.io/), an extendable workflow automation tool, on a [Dokku](http://dokku.viewdocs.io/dokku/) host. Dokku is a lightweight PaaS that simplifies deploying and managing applications using Docker.
+## Requisitos previos
 
-## Prerequisites
+Antes de continuar, asegúrese de tener lo siguiente:
 
-Before proceeding, ensure you have the following:
+- Un [host Dokku] en funcionamiento (http://dokku.viewdocs.io/dokku/getting-started/installation/).
+- El [complemento PostgreSQL] (https://github.com/dokku/dokku-postgres) instalado en Dokku.
+- (Opcional) El [complemento Let's Encrypt] (https://github.com/dokku/dokku-letsencrypt) para certificados SSL.
 
-- A working [Dokku host](http://dokku.viewdocs.io/dokku/getting-started/installation/).
-- The [PostgreSQL plugin](https://github.com/dokku/dokku-postgres) installed on Dokku.
-- (Optional) The [Let's Encrypt plugin](https://github.com/dokku/dokku-letsencrypt) for SSL certificates.
+## Instrucciones de configuración
 
-## Setup Instructions
+### 1. Crear la aplicación
 
-### 1. Create the App
-
-Log into your Dokku host and create the `n8n` app:
+Inicia sesión en tu host de Dokku y crea la aplicación `n8n`:
 
 ```bash
 dokku apps:create n8n
 ```
 
-### 2. Configure the App
+### 2. Configurar la aplicación
 
-#### Install, Create, and Link PostgreSQL Plugin
+#### Instalar, crear y vincular el plugin de PostgreSQL
 
-1. Install the PostgreSQL plugin:
+1. Instalar el plugin de PostgreSQL:
 
-    ```bash
-    dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
-    ```
+```bash
+dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
+```
 
-2. Create a PostgreSQL service:
+2. Crear un servicio de PostgreSQL:
 
-    ```bash
-    dokku postgres:create n8n
-    ```
+```bash
+dokku postgres:create n8n
+```
 
-3. Link the PostgreSQL service to the app:
+3. Vincular el servicio de PostgreSQL a la aplicación:
 
-    ```bash
-    dokku postgres:link n8n n8n
-    ```
+```bash
+dokku postgres:link n8n n8n
+```
 
-#### Set the Encryption Key
+#### Establecer la clave de cifrado
 
-Generate and set an encryption key for n8n:
+Generar y configurar una clave de cifrado para n8n:
 
 ```bash
 dokku config:set n8n N8N_ENCRYPTION_KEY=$(echo `openssl rand -base64 45` | tr -d \=+ | cut -c 1-32)
 ```
 
-#### Set the Webhook URL
+#### Configurar la URL del webhook
 
-Set the webhook URL for your n8n instance:
+Configure la URL del webhook para su instancia n8n:
 
 ```bash
 dokku config:set n8n WEBHOOK_URL=https://n8n.example.com
 ```
 
-### 3. Configure Persistent Storage
+### 3. Configurar el almacenamiento persistente
 
-To persist data between restarts (like community nodes, logs, etc...), create a folder on the host machine and mount it to the app container:
+Para conservar los datos entre reinicios (como nodos de la comunidad, registros, etc.), cree una carpeta en el equipo host y móntela en el contenedor de la aplicación:
 
 ```bash
 dokku storage:ensure-directory n8n --chown false
@@ -75,90 +73,83 @@ dokku storage:ensure-directory n8n --chown false
 dokku storage:mount n8n /var/lib/dokku/data/storage/n8n:/home/node/.n8n
 ```
 
-### 4. Configure the Domain and Ports
+### 4. Configurar el dominio y los puertos
 
-Set the domain for your app to enable routing:
+Configure el dominio de su aplicación para habilitar el enrutamiento:
 
 ```bash
 dokku domains:set n8n n8n.example.com
 ```
 
-Map the internal port `5678` to the external port `80`:
+Asignar el puerto interno `5678` al puerto externo `80`:
 
 ```bash
 # dokku proxy:ports-set n8n http:80:5678
 
 ```
 
-### 5. Deploy the App
+### Clonar el repositorio y enviar manualmente
 
-You can deploy the app to your Dokku server using one of the following methods:
+Si prefieres trabajar con el repositorio localmente, puedes clonarlo en tu equipo y enviarlo manualmente a tu servidor Dokku:
 
-#### Option 1: Deploy Using `dokku git:sync`
-
-If your repository is hosted on a remote Git server with an HTTPS URL, you can deploy the app directly to your Dokku server using `dokku git:sync`. This method also triggers a build process automatically. Run the following command:
+1. Clonar el repositorio:
 
 ```bash
-dokku git:sync --build n8n https://github.com/d1ceward-on-dokku/n8n_on_dokku.git
+# Vía HTTPS
+git clone https://github.com/edumag/n8n_on_dokku.git
 ```
 
-This will fetch the code from the specified repository, build the app, and deploy it to your Dokku server.
+2. Agregar tu servidor Dokku como Git remoto:
 
-#### Option 2: Clone the Repository and Push Manually
+```bash
+git remote add dokku dokku@example.com:n8n
+```
 
-If you prefer to work with the repository locally, you can clone it to your machine and push it to your Dokku server manually:
+3. Enviar la aplicación a tu servidor Dokku:
 
-1. Clone the repository:
+```bash
+git push dokku master
+```
 
-    ```bash
-    # Via HTTPS
-    git clone https://github.com/d1ceward-on-dokku/n8n_on_dokku.git
-    ```
+Elige el método que mejor se adapte a tu flujo de trabajo.
 
-2. Add your Dokku server as a Git remote:
+### 6. Habilitar SSL (Opcional)
 
-    ```bash
-    git remote add dokku dokku@example.com:n8n
-    ```
+Proteja su aplicación con un certificado SSL de Let's Encrypt:
 
-3. Push the app to your Dokku server:
+1. Agregue el puerto HTTPS:
 
-    ```bash
-    git push dokku master
-    ```
+```bash
+dokku proxy:ports:add n8n https:443:5678
+```
 
-Choose the method that best suits your workflow.
+2. Instale el plugin de Let's Encrypt:
 
-### 6. Enable SSL (Optional)
+```bash
+dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
+```
 
-Secure your app with an SSL certificate from Let's Encrypt:
+3. Configure el correo electrónico de contacto para Let's Encrypt:
 
-1. Add the HTTPS port:
+```bash
+dokku letsencrypt:set n8n email you@example.com
+```
 
-    ```bash
-    dokku proxy:ports:add n8n https:443:5678
-    ```
+4. Habilite Let's Encrypt para la aplicación:
 
-2. Install the Let's Encrypt plugin:
+```bash
+dokku letsencrypt n8n
+```
 
-    ```bash
-    dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
-    ```
+## Conclusión
 
-3. Set the contact email for Let's Encrypt:
+¡Felicitaciones! Su instancia n8n ya está en funcionamiento. Puedes acceder a él en [https://n8n.example.com](https://n8n.example.com).
 
-    ```bash
-    dokku letsencrypt:set n8n email you@example.com
-    ```
+Para más información sobre n8n, visita la [documentación oficial](https://docs.n8n.io/).
 
-4. Enable Let's Encrypt for the app:
+## Referencias
 
-    ```bash
-    dokku letsencrypt n8n
-    ```
+[![n8n](https://img.shields.io/badge/n8n-1.122.4-blue.svg)](https://github.com/n8n-io/n8n/releases/tag/n8n%401.122.4)
+[![Dokku](https://img.shields.io/badge/Dokku-Repo-blue.svg)](https://github.com/dokku/dokku)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/d1ceward-on-dokku/minio_on_dokku/graphs/commit-activity)
 
-## Wrapping Up
-
-Congratulations! Your n8n instance is now up and running. You can access it at [https://n8n.example.com](https://n8n.example.com).
-
-For more information about n8n, visit the [official documentation](https://docs.n8n.io/).
