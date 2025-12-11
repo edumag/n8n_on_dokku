@@ -1,6 +1,6 @@
 # Instalar n8n en Dokku
 
-![n8n](./img/n8n_dokku.png)
+![n8n](./img/n8n_dokku-01.png)
 
 Esta guía explica cómo implementar [n8n](https://n8n.io/), una herramienta de
 automatización de flujo de trabajo extensible, en un host
@@ -149,7 +149,7 @@ Para más información sobre n8n, visita la [documentación oficial](https://doc
 
 ## Referencias
 
-[![n8n](https://img.shields.io/badge/n8n-1.122.4-blue.svg)](https://github.com/n8n-io/n8n/releases/tag/n8n%401.122.4)
-[![Dokku](https://img.shields.io/badge/Dokku-Repo-blue.svg)](https://github.com/dokku/dokku)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/d1ceward-on-dokku/minio_on_dokku/graphs/commit-activity)
+[n8n](https://github.com/n8n-io/n8n/releases/tag/n8n%401.122.4)
+[Dokku](https://github.com/dokku/dokku)
+[Maintenance](https://github.com/d1ceward-on-dokku/minio_on_dokku/graphs/commit-activity)
 
