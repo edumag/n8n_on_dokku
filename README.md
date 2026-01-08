@@ -1,5 +1,7 @@
 # Instalar n8n en Dokku
 
+Actualizado: 8 de enero de 2026
+
 ![n8n](./img/n8n_dokku-01.png)
 
 Esta guía explica cómo implementar [n8n](https://n8n.io/), una herramienta de
@@ -84,7 +86,7 @@ dokku domains:set n8n n8n.example.com
 Asignar el puerto interno `5678` al puerto externo `80`:
 
 ```bash
-# dokku proxy:ports-set n8n http:80:5678
+# dokku ports:add n8n http:80:5678
 
 ```
 
@@ -120,7 +122,7 @@ Proteja su aplicación con un certificado SSL de Let's Encrypt:
 1. Agregue el puerto HTTPS:
 
 ```bash
-dokku proxy:ports:add n8n https:443:5678
+dokku ports:add n8n https:443:5678
 ```
 
 2. Instale el plugin de Let's Encrypt:
