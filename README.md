@@ -71,7 +71,7 @@ Para conservar los datos entre reinicios (como nodos de la comunidad, registros,
 
 ```bash
 dokku storage:ensure-directory n8n --chown false
-# chown 1000:1000 /var/lib/dokku/data/storage/n8n
+chown 1000:1000 /var/lib/dokku/data/storage/n8n
 dokku storage:mount n8n /var/lib/dokku/data/storage/n8n:/home/node/.n8n
 ```
 
@@ -86,7 +86,7 @@ dokku domains:set n8n n8n.example.com
 Asignar el puerto interno `5678` al puerto externo `80`:
 
 ```bash
-# dokku ports:add n8n http:80:5678
+dokku ports:add n8n http:80:5678
 
 ```
 
